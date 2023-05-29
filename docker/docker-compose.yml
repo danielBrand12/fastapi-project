@@ -1,0 +1,47 @@
+version: "3.2"
+
+services:
+  fastapi-service:
+    image: fastapi-service
+    build:
+      context: ..
+      dockerfile: docker/dockerfile
+    command: uvicorn app.main:app --reload --workers 1 --host 0.0.0.0 --port 8000
+    volumes:
+      - ../:/usr/src/app/
+    depends_on:
+      - postgres-db
+    ports:
+      - 8000:8000
+      - 10004:10004
+    environment:
+      - DEBUGGER=True
+      - API_V1_STR=/api/v1
+      - PROJECT_NAME=FastAPI Service
+      - SQLALCHEMY_DATABASE_URI=postgresql://postgres:postgres@postgres-db:5432/db
+    networks:
+      - fastapi
+
+  postgres-db:
+    image: postgres:14.1-alpine
+    expose:
+      - 5432
+    ports:
+      - "5438:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=db
+    volumes:
+      - postgres-volume:/var/lib/postgresql/data
+    networks:
+      - fastapi
+
+
+volumes:
+  postgres-volume:
+    external: true
+
+networks:
+  fastapi:
+    external: true
