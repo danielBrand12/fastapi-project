@@ -5,13 +5,15 @@ from pydantic import BaseModel
 
 # Shared properties
 class ClientBase(BaseModel):
-    title: Optional[str] = None
-    description: Optional[str] = None
+    name: Optional[str] = None
+    lastname: Optional[str] = None
+    cellphoneNumber: Optional[int] = None
+    email: Optional[str] = None
 
 
 # Properties to receive on Client creation
 class ClientCreate(ClientBase):
-    title: str
+    name: str
 
 
 # Properties to receive on Client update
@@ -22,7 +24,7 @@ class ClientUpdate(ClientBase):
 # Properties shared by models stored in DB
 class ClientInDBBase(ClientBase):
     id: int
-    title: str
+    name: str
     #owner_id: int
 
     class Config:
